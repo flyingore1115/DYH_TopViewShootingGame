@@ -3,41 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAim : MonoBehaviour
-{
-    public GameObject bullet;
+{ 
+    public Vector3 screenPos;
+    public Vector3 worldPos;
+    public LayerMask layersOnHit;
+    public Transform aimPoint;
+    public GameObject prefab_bullet;
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Aim();
-        if (Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0))
         {
             Shoot();
         }
     }
-    public void Aim()
+    private void Aim()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.x = 10f;
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        mousePos.y = transform.position.y;
-        Debug.DrawRay(transform.position, mousePos - transform.position, Color.green);
-    }
+        screenPos = Input.mousePosition;
 
+        Ray ray = Camera.main.ScreenPointToRay(screenPos);
+
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, 100, layersOnHit))
+        {
+            worldPos = hitInfo.point;
+            worldPos.y = transform.position.y;
+        }
+        aimPoint.transform.position = worldPos;
+    }
     private void Shoot()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.x = 10f;
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        mousePos.y = transform.position.y;
-        Debug.DrawRay(transform.position, mousePos - transform.position, Color.green);
-
-        GameObject _bullet = Instantiate(bullet, transform.position, Quaternion.identity);
-        _bullet.transform.LookAt(mousePos - transform.position);
+        GameObject _obj = Instantiate(prefab_bullet, transform.position, Quaternion.identity);
+        _obj.transform.LookAt(worldPos);
     }
 }

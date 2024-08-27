@@ -2,29 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Anemy : MonoBehaviour
 {
+    public GameObject player;
     public float moveSpeed;
-
     void Start()
     {
-        Invoke("KillMySelf", 3.0f);
+        player = GameObject.Find("Player");
     }
 
     // Update is called once per frame
     void Update()
     {
+        transform.LookAt(player.transform.position);
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
-    }
-    private void KillMySelf()
-    {
-        Destroy(gameObject);
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.CompareTag("Enemy"))
+        if (collision.collider.CompareTag("Player"))
         {
             Destroy(collision.gameObject);
         }
     }
+
+
 }
